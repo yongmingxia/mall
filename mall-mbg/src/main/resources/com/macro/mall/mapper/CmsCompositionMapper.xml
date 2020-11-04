@@ -8,8 +8,11 @@
     <result column="author" jdbcType="VARCHAR" property="author" />
     <result column="reviewer" jdbcType="VARCHAR" property="reviewer" />
     <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="is_free" jdbcType="BOOLEAN" property="isfree" />
     <result column="describe" jdbcType="VARCHAR" property="describe" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updatetime" />
     <result column="read_count" jdbcType="INTEGER" property="readCount" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -71,9 +74,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, composition_type, author,reviewer, level, describe, create_time,read_count
+    id, title, composition_type, author,reviewer, level,status,is_free, describe, create_time,update_time,read_count
   </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.macro.mall.model.CmsTopicExample" resultMap="ResultMapWithBLOBs">
+  <select id="selectByExampleWithBLOBs" parameterType="com.macro.mall.model.CmsCompositionExample" resultMap="ResultMapWithBLOBs">
     select
     <if test="distinct">
       distinct
@@ -81,7 +84,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from cms_topic
+    from cms_composition
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -89,13 +92,13 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" parameterType="com.macro.mall.model.CmsTopicExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.macro.mall.model.CmsCompositionExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from cms_topic
+    from cms_composition
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -108,17 +111,233 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from cms_topic
+    from cms_composition
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from cms_topic
+    delete from cms_composition
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.macro.mall.model.CmsTopicExample">
-    delete from cms_topic
+  <delete id="deleteByExample" parameterType="com.macro.mall.model.CmsCompositionExample">
+    delete from cms_composition
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
+  <insert id="insert" parameterType="com.macro.mall.model.CmsComposition">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cms_composition (title, composition_type, author, 
+    reviewer, level, status, is_free, describe, create_time, 
+    update_time,read_count)
+    values (#{title,jdbcType=VARCHAR}, #{composition_type,jdbcType=INTEGER}, #{author,jdbcType=VARCHAR}, 
+      #{reviewer,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{is_free,jdbcType=TINYINT}, #{describe,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP}, 
+      #{update_time,jdbcType=TIMESTAMP},#{read_count,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.macro.mall.model.CmsComposition">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cms_composition
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        title,
+      </if>
+      <if test="composition_type != null">
+        composition_type,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="level != null">
+        level,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="is_free != null">
+        is_free,
+      </if>
+      <if test="create_time != null">
+        create_time,
+      </if>
+      <if test="read_count != null">
+        read_count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="composition_type != null">
+        #{composition_type,jdbcType=INTEGER},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="is_free != null">
+        #{is_free,jdbcType=TINYINT},
+      </if>
+      <if test="create_time != null">
+        #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="read_count != null">
+        #{read_count,jdbcType=INTEGER},
+      </if>
+
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.macro.mall.model.CmsCompositionExample" resultType="java.lang.Long">
+    select count(*) from cms_composition
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update cms_composition
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.composition_type != null">
+        composition_type = #{record.composition_type,jdbcType=INTEGER},
+      </if>
+      <if test="record.author != null">
+        author = #{record.author,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reviewer != null">
+        reviewer = #{record.reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level != null">
+        level = #{record.level,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.is_free != null">
+        is_free = #{record.is_free,jdbcType=TINYINT},
+      </if>
+      <if test="record.describe != null">
+        describe = #{record.describe,jdbcType=VARCHAR},
+      </if>
+      <if test="record.update_time != null">
+        update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.read_count != null">
+        read_count = #{record.read_count,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update cms_composition
+    set id = #{record.id,jdbcType=BIGINT},
+      title = #{record.title,jdbcType=VARCHAR},
+      composition_type = #{record.composition_type,jdbcType=INTEGER},
+      author = #{record.author,jdbcType=VARCHAR},
+      reviewer = #{record.reviewer,jdbcType=VARCHAR},
+      level = #{record.level,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      is_free = #{record.is_free,jdbcType=TINYINT},
+      describe = #{record.describe,jdbcType=VARCHAR},
+      update_time = #{record.update_time,jdbcType=TIMESTAMP},
+      read_count = #{record.read_count,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update cms_composition
+    set id = #{record.id,jdbcType=BIGINT},
+    title = #{record.title,jdbcType=VARCHAR},
+    composition_type = #{record.composition_type,jdbcType=INTEGER},
+    author = #{record.author,jdbcType=VARCHAR},
+    reviewer = #{record.reviewer,jdbcType=VARCHAR},
+    level = #{record.level,jdbcType=VARCHAR},
+    status = #{record.status,jdbcType=TINYINT},
+    is_free = #{record.is_free,jdbcType=TINYINT},
+    describe = #{record.describe,jdbcType=VARCHAR},
+    update_time = #{record.update_time,jdbcType=TIMESTAMP},
+    read_count = #{record.read_count,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.macro.mall.model.CmsComposition">
+    update cms_composition
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="composition_type != null">
+        composition_type = #{composition_type,jdbcType=INTEGER},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="reviewer != null">
+        reviewer = #{reviewer,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        level = #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="is_free != null">
+        is_free = #{is_free,jdbcType=TINYINT},
+      </if>
+      <if test="describe != null">
+        describe = #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="update_time != null">
+        update_time = #{update_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="read_count != null">
+        read_count = #{read_count,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.macro.mall.model.CmsComposition">
+    update cms_composition
+    set title = #{title,jdbcType=VARCHAR},
+    composition_type = #{composition_type,jdbcType=INTEGER},
+    author = #{author,jdbcType=VARCHAR},
+    reviewer = #{reviewer,jdbcType=VARCHAR},
+    level = #{level,jdbcType=VARCHAR},
+    status = #{status,jdbcType=TINYINT},
+    is_free = #{is_free,jdbcType=TINYINT},
+    describe = #{describe,jdbcType=VARCHAR},
+    update_time = #{update_time,jdbcType=TIMESTAMP},
+    read_count = #{read_count,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.macro.mall.model.CmsComposition">
+    update cms_composition
+    set title = #{title,jdbcType=VARCHAR},
+    composition_type = #{composition_type,jdbcType=INTEGER},
+    author = #{author,jdbcType=VARCHAR},
+    reviewer = #{reviewer,jdbcType=VARCHAR},
+    level = #{level,jdbcType=VARCHAR},
+    status = #{status,jdbcType=TINYINT},
+    is_free = #{is_free,jdbcType=TINYINT},
+    describe = #{describe,jdbcType=VARCHAR},
+    update_time = #{update_time,jdbcType=TIMESTAMP},
+    read_count = #{read_count,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
   </mapper>

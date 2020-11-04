@@ -6,6 +6,7 @@
     <result column="composition_id" jdbcType="INTEGER" property="CompositionId" />
     <result column="content_Type" jdbcType="INTEGER" property="ContentType" />
     <result column="content" jdbcType="VARCHAR" property="Content" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
     <result column="audio" jdbcType="VARCHAR" property="audio" />
     <result column="audio_duration" jdbcType="INTEGER" property="audioDuration" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -70,6 +71,54 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, composition_id, content_Type, content,audio, audio_duration, create_time,read_count
+    id, composition_id, content_Type, content,author,audio, audio_duration, create_time,read_count
   </sql>  
+  <select id="selectByExampleWithBLOBs" parameterType="com.macro.mall.model.CmsCompositionContentExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_topic
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.macro.mall.model.CmsCompositionContentExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from cms_topic
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_topic
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cms_topic
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.macro.mall.model.CmsCompositionContentExample">
+    delete from cms_topic
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
   </mapper>
